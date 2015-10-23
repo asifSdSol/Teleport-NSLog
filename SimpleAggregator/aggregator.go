@@ -40,7 +40,7 @@ func Handler(resp http.ResponseWriter, req *http.Request) {
         http.Error(resp, err.Error(), http.StatusInternalServerError)
         return
     }   
-    dst, err := os.OpenFile(path.Join("logs",deviceid), os.O_CREATE|os.O_APPEND|os.O_WRONLY,0600)
+    dst, err := os.OpenFile(path.Join("logs",deviceid), os.O_CREATE|os.O_APPEND|os.O_WRONLY,0666)
     log.Printf("Appending to %s", path.Join("logs",deviceid))
     if err != nil {
         http.Error(resp, err.Error(), http.StatusInternalServerError)
