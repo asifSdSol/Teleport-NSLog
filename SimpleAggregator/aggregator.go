@@ -48,7 +48,7 @@ func Handler(resp http.ResponseWriter, req *http.Request) {
         return
     }
     execdirpath := path.Dir(execpath)
-    logfilepath := path.Join(execdirpath,"logs",deviceid)
+    logfilepath := path.Join(execdirpath,"logs",deviceid + ".log")
     dst, err := os.OpenFile(logfilepath, os.O_CREATE|os.O_APPEND|os.O_WRONLY,0644)
     log.Printf("Appending to %s", logfilepath)
     if err != nil {
