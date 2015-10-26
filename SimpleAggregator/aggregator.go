@@ -6,7 +6,8 @@ import (
     "io/ioutil"
     "compress/gzip"
     "io"
-    "os"
+    "os" 
+    "github.com/kardianos/osext"
     "path"
     "bytes"
     "log"
@@ -40,10 +41,19 @@ func Handler(resp http.ResponseWriter, req *http.Request) {
         http.Error(resp, err.Error(), http.StatusInternalServerError)
         return
     }   
-    dst, err := os.OpenFile(path.Join("logs",deviceid), os.O_CREATE|os.O_APPEND|os.O_WRONLY,0666)
-    log.Printf("Appending to %s", path.Join("logs",deviceid))
+    execpath,execpatherr := osext.Executable()
+    if execpatherr != nil {
+	http.Error(resp, execpatherr.Error(), http.StatusInternalServerError)
+        log.Printf("Error when locating executable path: %s", execpatherr.Error())
+        return
+    }
+    execdirpath := path.Dir(execpath)
+    logfilepath := path.Join(execdirpath,"logs",deviceid)
+    dst, err := os.OpenFile(logfilepath, os.O_CREATE|os.O_APPEND|os.O_WRONLY,0644)
+    log.Printf("Appending to %s", logfilepath)
     if err != nil {
         http.Error(resp, err.Error(), http.StatusInternalServerError)
+	log.Printf("Error when opening file: %s", err.Error())
         return
     }
     defer dst.Close()
